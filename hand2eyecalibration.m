@@ -3,33 +3,35 @@
 %for the objects being retrieved/places to put the object
 
 %% Checkerboard Calibration for Camera to End Effector
-function [cameraParams, tr_cam_endeff, tr_cam_object] = handToEyeCalibration()
+function [cameraParams, trCamEndEff, trCamObject] = handToEyeCalibration()
+clear all
+
+% setting the folder the images are in. Make sure the current folder in matlab is the folder before the folder below.
 imageFolder = './CalibrationImages';
 
 % Square Size is the size of each square on the checkerboard in mm
-squareSize = 20;
+squareSize = 30;
 % converting square size to m
 squareSize = squareSize/1000;
 
-% get the calibration images
-filePattern = fullfile(myFolder, '*.jpg');
-calibImages = dir(filePattern);
-for i = length(calibImages)
-    baseFileName = calibImages(k).name;
-    fullFileName = fullfile(myFolder, baseFileName);
+% get the file path for the calibration images
+imageArray = dir(imageFolder);
+imageArray = {imageArray(~[imageArray.isdir]).name};
+for i = 1:length(imageArray)
+    imageArray{i} = [imageFolder filesep imageArray{i}];
 end
 
 % find checkerboard points
-[points, boardSize, imagesUsed] = detectCheckerboardPoints(calibImages);
+[points, boardSize, imagesUsed] = detectCheckerboardPoints(imageArray);
 if(imagesUsed == 0)
-    error("No calibration images are found in the folder ./Calibration Images");
+    error("No calibration images are found in the folder CalibrationImages");
 end
 
 % generate an ideal checkerboard to compare calibration images with
 worldPoints = generateCheckerboardPoints(boardSize, squareSize);
 
 % find camera parameters
-cameraParams = estimateCameraParameters(points, worldPoints, 'WorldUnits', m, 'NumRadialDistortionCoefficients', 2, ...
+cameraParams = estimateCameraParameters(points, worldPoints, 'WorldUnits', 'm', 'NumRadialDistortionCoefficients', 2, ...
     'EstimateTangentialDistortion', true);
 %% Hand to Eye Transformations
 
@@ -45,34 +47,35 @@ pause(2);
 currentJointState = jointStateSubscriber.LatestMessage.Position;
 
 %get ar tag information from ar_track_alvar_msgs/AlvarMarkers
-ARTagSub = ('/ar_pose_marker','ar_track_alvar_msgs/AlvarMarkers');
+ARTagSub = rossubscriber('/ar_pose_marker','ar_track_alvar_msgs/AlvarMarkers');
 tagMsg = recieve(ARTagSub);
 
 % Transform for Camera to AR Tag on EndEff - assuming 0 is the base AR Tag
+tagArray = {tagMsg.markers};
 
 %offset of the tag to the base in m
 offset = [0.1, 0.1];
 
-trans_cam_dobotBase = [tagMsg.Markers[0].Pose.Pose.Position.X, tagMsg.Markers[0].Pose.Pose.Position.Y,...
-    tagMsg.Markers[0].Pose.Pose.Position.Z]
-rot_cam_dobotBase = quat2rotm(tagMsg.Markers[0].Pose.Pose.Orientation.W, ...
-    tagMsg.Markers[0].Pose.Pose.Orientation.X, ...
-    tagMsg.Markers[0].Pose.Pose.Orientation.Y, ...
-    tagMsg.Markers[0].Pose.Pose.Orientation.Z);
+trans_cam_dobotBase = [tagArray{0}.Pose.Pose.Position.X, tagArray{0}.Pose.Pose.Position.Y,...
+    tagArray{0}.Pose.Pose.Position.Z]
+rot_cam_dobotBase = quat2rotm(tagArray{0}.Pose.Pose.Orientation.W, ...
+    tagArray{0}.Pose.Pose.Orientation.X, ...
+    tagArray{0}.Pose.Pose.Orientation.Y, ...
+    tagArray{0}.Pose.Pose.Orientation.Z);
 
 tr_cam_dobotBase = rt2tr(rot_cam_dobotBase, trans_cam_dobotBase);
 tr_cam_dobotBase = tr_cam_dobotBase*transl(offset(1), offset(2), 0);
 
 dobot.base = tr_cam_dobotBase;
 
-tr_cam_endeff = dobot.fkine(currentJointState);
+trCamEndEff = dobot.fkine(currentJointState);
 %Transform for Camera to Object - assuming 1 is object AR Tag
 
-trans_cam_object = [tagMsg.Markers[1].Pose.Pose.Position.X, tagMsg.Markers[1].Pose.Pose.Position.Y,...
-    tagMsg.Markers[1].Pose.Pose.Position.Z]
-rot_cam_object = quat2rotm(tagMsg.Markers[1].Pose.Pose.Orientation.W, ...
-    tagMsg.Markers[1].Pose.Pose.Orientation.X, ...
-    tagMsg.Markers[1].Pose.Pose.Orientation.Y, ...
-    tagMsg.Markers[1].Pose.Pose.Orientation.Z);
-tr_cam_object = rt2tr(rot_cam_object, trans_cam_object);
+trans_cam_object = [tagArray{1}.Pose.Pose.Position.X, tagArray{1}.Pose.Pose.Position.Y,...
+    tagArray{1}.Pose.Pose.Position.Z]
+rot_cam_object = quat2rotm(tagArray{1}.Pose.Pose.Orientation.W, ...
+    tagArray{1}.Pose.Pose.Orientation.X, ...
+    tagArray{1}.Pose.Pose.Orientation.Y, ...
+    tagArray{1}.Pose.Pose.Orientation.Z);
+trCamObject = rt2tr(rot_cam_object, trans_cam_object);
 end
