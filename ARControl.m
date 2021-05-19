@@ -6,7 +6,7 @@ classdef ARControl < handle
         tag_msg;
         
         ar_base_offset = [-0.092, 0.0, 0.13];
-        ee_hover_height = 0.02;
+        ee_hover_height = 0.05;
         
         arm_lengths = [0.13, 0.135, 0.147];
         arm_offsets = [0.06, 0, -0.06];
@@ -28,9 +28,10 @@ classdef ARControl < handle
         %%
         function self = ARControl()
             self.ARTagSub = rossubscriber('/tags','geometry_msgs/PoseArray');
-            self.tag_msg = receive(ARTagSub);
+            self.tag_msg = receive(self.ARTagSub);
             
-            app.robot1 = RobotControl();
+            self.robot1 = DobotControl();
+
         end
         
         %%
@@ -47,9 +48,9 @@ classdef ARControl < handle
             self.tr_cam_base = rt2tr(r_cam_base, t_cam_base);
             self.tr_cam_base = self.tr_cam_base*transl(self.ar_base_offset(1), self.ar_base_offset(2), self.ar_base_offset(3) - self.ee_hover_height)
             
-            self.ar_tag_positions(1) = self.tr_cam_base;
+            self.ar_tag_positions{1} = self.tr_cam_base;
             
-            for i = 2 : length(self.ar_tag_positions)
+            for i = 2 : length(ar_tags.Poses)
                 
                 ar_tag = ar_tags.Poses(i);
                 
@@ -58,12 +59,12 @@ classdef ARControl < handle
                 
                 self.tr_cam_tag = rt2tr(r_cam_tag, t_cam_tag);
                 
-                self.ar_tag_positions(i) = self.tr_cam_tag;
+                self.ar_tag_positions{i} = self.tr_cam_tag;
                 
             end
             
             
-            
+            disp(self.ar_tag_positions);
         end
         
         %%
@@ -94,10 +95,13 @@ classdef ARControl < handle
             
             % Calculate Transform for Tag to Robot Base
             % Multiply transforms to get tag in robot base frame
-            tr_base_tag = inv(self.ar_tag_positions(1)) * self.ar_tag_positions(tag);
+            
+            tag
+            
+            tr_base_tag = inv(cell2mat(self.ar_tag_positions(1))) * cell2mat(self.ar_tag_positions(tag+1));
             
             
-            % Determine translation for the required end effector pose
+            % Determine translation fr the required end effector pose
             t_base_tag = (transl(tr_base_tag))';
             
             % Determine the angle of Joint 1 using atan2
@@ -164,8 +168,8 @@ classdef ARControl < handle
                 end_effector_rotation = [0,0,0];
                 
                 % Publish the Pose
-                self.robot1.MoveToCartesionPoint(end_effector_position);
-                pause(0.8);
+                self.robot1.MoveToCartesianPoint(t_control)
+                pause(0.1);
                 
             end
             
@@ -187,23 +191,31 @@ classdef ARControl < handle
         end
         
         %%
-        function tagPositions = getTagPositions(self)
+        function numberOfTags = GetNumberOfTags(self)
+            numberOfTags = length(self.ar_tag_positions) - 1;
+        end
+        
+        %%
+        function tagPositions = GetTagPositions(self)
 
             for i = 2 : length(self.ar_tag_positions)
+
+                i
                 
-                position = self.ar_tag_positions(2);
+                position = self.ar_tag_positions{i};
                 
-                x = num2str(position(1));
-                y = num2str(position(2));
-                z = num2str(position(3));
+                x = num2str(position(1, 4));
+                y = num2str(position(2, 4));
+                z = num2str(position(3, 4));
                 
-                str = strcat('X: ', x, ' Y: ', y, ' Z: ', z); 
+                str = strcat('X: ', x, ' Y: ', y, ' Z: ', z) 
                 
-                tagPositions(length(tagPositions) + 1) = str;
+                strArray{i-1} = str;
                 
             end
+
+            tagPositions = strArray;
             
-            return tagPositions;
         end
         
         

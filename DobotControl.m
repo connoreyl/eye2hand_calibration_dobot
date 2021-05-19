@@ -148,30 +148,28 @@ classdef DobotControl < handle
         function MoveToCartesianPoint(self, targetEndEffector)
             
             state = 0;
-            counter = 0;
-            %pastEndEffectors{};
             endEffectorRotation = [0,0,0];
             
             while state == 0
                 
-                if self.eStopped == 1 %&& self.resumed == 0
+                if self.eStopped == 1
                     pause(0.3);
                 end
                 
                 
-                if self.eStopped == 0 %&& self.resumed == 1
+                if self.eStopped == 0
                     currentEndEffector = self.dobot.GetCurrentEndEffectorState();
-                    %pastEndEffectors{length(pastEndEffectors) + 1} = currentEndEffector;
+                    
+                    
                     
                     self.dobot.PublishEndEffectorPose(targetEndEffector, endEffectorRotation);
                     
                     dis = sqrt((currentEndEffector(1) - targetEndEffector(1))^2 + (currentEndEffector(2) - targetEndEffector(2))^2 + (currentEndEffector(3) - targetEndEffector(3))^2);
                     
+                    
                     if dis <= 0.005
                         state = 1;
                     end
-                    
-                    %if 
                     
                     pause(0.01);
                 end
