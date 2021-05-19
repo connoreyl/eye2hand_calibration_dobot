@@ -99,9 +99,9 @@ tag_msg_2 = receive(ARTagSub);
 ar_tag_2 = tag_msg_2.Poses(2);
 
 % Translation component of the AR Tag
-t_cam_tag = [ar_tag_2.Position.X,ar_tag_2.Position.Y,ar_tag_2.Position.Z]';
+t_cam_tag = [ar_tag_2.Position.X, ar_tag_2.Position.Y, ar_tag_2.Position.Z]';
 % Rotation component of AR Tag
-r_cam_tag = quat2rotm([ar_tag_2.Orientation.W,ar_tag_2.Orientation.X,ar_tag_2.Orientation.Y,ar_tag_2.Orientation.Z]);
+r_cam_tag = quat2rotm([ar_tag_2.Orientation.W, ar_tag_2.Orientation.X, ar_tag_2.Orientation.Y, ar_tag_2.Orientation.Z]);
 
 % Convert R and t into a transform
 tr_cam_tag = rt2tr(r_cam_tag, t_cam_tag);
