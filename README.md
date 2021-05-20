@@ -13,6 +13,7 @@ If the tags, robot or camera have been moved, the GUI also allows for recalibrat
 If required, the transforms of all the Camera, the AR Tags, the Robot Base and the Robot End Effector can be plotted in a graph.
 
 ![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/68938187/118931416-52295d00-b98a-11eb-98e4-9195a2df6a9a.png)
+<img align="left" width="600" src="https://user-images.githubusercontent.com/68938187/118931416-52295d00-b98a-11eb-98e4-9195a2df6a9a.png">
 
 ### Project Functionalities
 The program has four primary functions:
