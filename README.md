@@ -1,3 +1,4 @@
+![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/68938187/118931416-52295d00-b98a-11eb-98e4-9195a2df6a9a.png)
 # HAND-TO-EYE CALIBRATION WITH THE DOBOT MAGICIAN
 
 
