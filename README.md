@@ -1,10 +1,10 @@
-#HAND-TO-EYE CALIBRATION WITH THE DOBOT MAGICIAN
+# HAND-TO-EYE CALIBRATION WITH THE DOBOT MAGICIAN
 
 
-##By Connor Eyles, Joshua Poot and Travis Goodshaw
+## By Connor Eyles, Joshua Poot and Travis Goodshaw
 
 
-###Project Outline
+### Project Outline
 The code included in this repository is for calibrating the position of the objects and robot base with respect to the camera. 
 The hand to eye calibration is done by finding the positions of the AR Tags using the ar_tag_toolbox and an RGB-D Camera.
 The AR Tag for the base is transformed by multiplying the transform offset and inverting this to turn it from the camera frame into the robot frame of reference.
