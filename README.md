@@ -15,7 +15,13 @@ If required, the transforms of all the Camera, the AR Tags, the Robot Base and t
 The program has two primary functions:
 
 - Moving to Tags: The Dobot will move to any of the calibrated AR Tags in visual range. The GUI allows the user to select which tag it can move to, but will not move to tags that aren't in range.
-
 - Follow Mode: The Dobot will follow a single AR Tag, even if the AR Tag is moved but still in range of the sensor.
+
+### ROS Packages required to run this program are:
+
+- ar_track_alvar
+- ar_tag_toolbox
+- dobot_magician_driver
+- a usb camera driver (in this case, we used the realsense-ros driver)
 
 As a note: the ar_convert ros package is authored By Himavaan Chandra. As a group, we had trouble accessing the AR Tag topic in Matlab for an unknown reason, and this package allowed us to circumvent this problem, allowing us to get the data from the AR Tag Toolbox.
