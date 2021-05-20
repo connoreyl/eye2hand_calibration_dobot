@@ -1,4 +1,3 @@
-![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/68938187/118931416-52295d00-b98a-11eb-98e4-9195a2df6a9a.png)
 # HAND-TO-EYE CALIBRATION WITH THE DOBOT MAGICIAN
 
 
@@ -13,12 +12,16 @@ The GUI allows us to connect, disconnect and initialise to the Dobot. It offers 
 If the tags, robot or camera have been moved, the GUI also allows for recalibration without having to reinitialise the entire program.
 If required, the transforms of all the Camera, the AR Tags, the Robot Base and the Robot End Effector can be plotted in a graph.
 
+![MicrosoftTeams-image (1)](https://user-images.githubusercontent.com/68938187/118931416-52295d00-b98a-11eb-98e4-9195a2df6a9a.png)
+
 ### Project Functionalities
 The program has four primary functions:
 - Calibration: The camera will determine the poses of the AR Tags, and will determine the transforms of the camera-to-base and tags-to base. Using this, the camera can be placed at any point in the 3D space, even upside down and behind the robot, provided that it can see the tag at the base of the robot.
 - Moving to Tags: The Dobot will move to any of the calibrated AR Tags in visual range. The GUI allows the user to select which tag it can move to, but will not move to tags that aren't in range.
 - Follow Mode: The Dobot will follow a single AR Tag, even if the AR Tag is moved but still in range of the sensor.
 - Plot Tags: The program will generate a 3D plot of the transforms of the camera, end-effector and tags with respect to the robot base.
+
+![TrPlot](https://user-images.githubusercontent.com/68938187/118932431-63269e00-b98b-11eb-942d-3183be67eb30.png)
 
 ### Required ROS Packages
 To run our program, the following ROS packages are required:
