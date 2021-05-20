@@ -15,7 +15,7 @@ classdef ARControl < handle
         tr_base_ee;
         
         tr_cam_base; % for plotting tr
-        tr_cam_tag;  % for plotting tr
+        tr_cam_tag;
         tr_cam_ee;   % for plotting tr
         
         robot1;
@@ -37,6 +37,8 @@ classdef ARControl < handle
         %%
         function GetARTagPositions(self)
 
+            self.ar_tag_positions = {};
+            
             ar_tags = receive(self.ARTagSub);
                         
             robot_tag = ar_tags.Poses(1);
@@ -63,8 +65,8 @@ classdef ARControl < handle
                 
             end
             
-            
-            disp(self.ar_tag_positions);
+            disp('Number of Tags Detected:');
+            disp(length(self.ar_tag_positions));
         end
         
         %%
@@ -86,7 +88,7 @@ classdef ARControl < handle
             % Determine the transform
             self.tr_base_ee = rt2tr(r_base_ee, t_base_ee);
             
-            self.tr_cam_ee = self.tr_cam_base*self.tr_base_ee;
+            %self.tr_cam_ee = self.tr_cam_base*self.tr_base_ee;
             
         end
     
@@ -95,8 +97,6 @@ classdef ARControl < handle
             
             % Calculate Transform for Tag to Robot Base
             % Multiply transforms to get tag in robot base frame
-            
-            tag
             
             tr_base_tag = inv(cell2mat(self.ar_tag_positions(1))) * cell2mat(self.ar_tag_positions(tag+1));
             
@@ -177,16 +177,30 @@ classdef ARControl < handle
         
         %%
         function TRPlot(self)
-
-            axis = [-0.5 1 -0.7 0.7 -0.7 0.7];
             
-            trplot(eye(4),'length',0.2, 'axis', axis);
+            clf;
+
+            axis = [-0.2 0.8 -0.5 0.5 -0.2 0.8];
+            
+            trplot(eye(4),'color',[0 0 1],'frame', 'RB', 'length',0.1 , 'axis', axis);
             hold on;
-            trplot(self.tr_cam_base,'color',[1 0 0],'length',0.2);
+            cam = inv(self.tr_cam_base);
+            cam(3, 4) = cam(3, 4) + 0.08;
+            trplot(cam,'color',[1 0 0],'frame', 'Cam','length',0.1);
             hold on;
-            trplot(self.tr_cam_tag,'color',[1 0 1],'length',0.2);
-            hold on;
-            trplot(self.tr_cam_ee,'color',[0 1 0],'length',0.2);
+            self.GetEndEffectorPosition();
+            trplot(self.tr_base_ee,'color',[0 1 1],'length',0.1);%,'frame', 'EE');
+            
+            for i = 2 : length(self.ar_tag_positions)
+                
+                hold on;
+                
+                tr_base_tag = inv(cell2mat(self.ar_tag_positions(1))) * cell2mat(self.ar_tag_positions(i));
+                tr_base_tag(3, 4) = tr_base_tag(3,4) + 0.08;
+                
+                trplot(tr_base_tag,'color',[0 1 0],'length',0.05);
+                
+            end
             
         end
         
@@ -200,16 +214,15 @@ classdef ARControl < handle
 
             for i = 2 : length(self.ar_tag_positions)
 
-                i
+                tr_base_tag = inv(cell2mat(self.ar_tag_positions(1))) * cell2mat(self.ar_tag_positions(i));
+                position = tr_base_tag;
                 
-                position = self.ar_tag_positions{i};
+                x = num2str(round(position(1, 4), 2));
+                y = num2str(round(position(2, 4), 2));
+                z = num2str(round(position(3, 4), 2) + 0.08);
                 
-                x = num2str(position(1, 4));
-                y = num2str(position(2, 4));
-                z = num2str(position(3, 4));
-                
-                str = strcat('X: ', x, ' Y: ', y, ' Z: ', z) 
-                
+                str = strcat("X: ", x, " Y: ", y, " Z: ", z); 
+
                 strArray{i-1} = str;
                 
             end
