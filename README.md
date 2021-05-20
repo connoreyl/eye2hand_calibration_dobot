@@ -8,23 +8,29 @@
 The code included in this repository is for calibrating the position of the objects and robot base with respect to the camera. 
 The hand to eye calibration is done by finding the positions of the AR Tags using the ar_tag_toolbox and an RGB-D Camera.
 The AR Tag for the base is transformed by multiplying the transform offset and inverting this to turn it from the camera frame into the robot frame of reference.
-The GUI allows us to connect, disconnect and initialise to the Dobot. It offers a user the functionality to calibrate the tag positions with respect to the camera, move the dobot to each tag position and switch to tag follow mode. The GUI also displays the X,Y and Z position of the tags with respect to the robot. 
+The GUI, shown in Figure 1, allows us to connect, disconnect and initialise to the Dobot. It offers a user the functionality to calibrate the tag positions with respect to the camera, move the dobot to each tag position and switch to tag follow mode. The GUI also displays the X,Y and Z position of the tags with respect to the robot. 
 If the tags, robot or camera have been moved, the GUI also allows for recalibration without having to reinitialise the entire program.
-If required, the transforms of all the Camera, the AR Tags, the Robot Base and the Robot End Effector can be plotted in a graph.
+If required, the transforms of all the Camera, the AR Tags, the Robot Base and the Robot End Effector can be plotted in a graph, as seen in Figure 2.
 
 <p align="center">
 <img width="400" src="https://user-images.githubusercontent.com/68938187/118931416-52295d00-b98a-11eb-98e4-9195a2df6a9a.png">
 <p/>
+<p align="center">
+Figure 1 - The GUI
+<p/>
 
 ### Project Functionalities
-The program has four primary functions:
+The program has four primary functions available on the GUI:
 - Calibration: The camera will determine the poses of the AR Tags, and will determine the transforms of the camera-to-base and tags-to base. Using this, the camera can be placed at any point in the 3D space, even upside down and behind the robot, provided that it can see the tag at the base of the robot.
 - Moving to Tags: The Dobot will move to any of the calibrated AR Tags in visual range. The GUI allows the user to select which tag it can move to, but will not move to tags that aren't in range.
 - Follow Mode: The Dobot will follow a single AR Tag, even if the AR Tag is moved but still in range of the sensor.
-- Plot Tags: The program will generate a 3D plot of the transforms of the camera, end-effector and tags with respect to the robot base.
+- Plot Tags: The program will generate a 3D plot of the transforms of the camera, end-effector and tags with respect to the robot base, shown in Figure 2.
 
 <p align="center">
 <img width="400" src="https://user-images.githubusercontent.com/68938187/118932431-63269e00-b98b-11eb-942d-3183be67eb30.png">
+<p/>
+<p align="center">
+Figure 2 - The Generated Pose Plot
 <p/>
 
 ### Required ROS Packages
