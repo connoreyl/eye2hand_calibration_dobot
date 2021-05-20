@@ -43,3 +43,6 @@ To run our program, the following ROS packages are required:
 ### Other Notes
 
 As a note: the ar_convert ros package is authored By Himavaan Chandra. As a group, we had trouble accessing the AR Tag topic in Matlab for an unknown reason, and this package allowed us to circumvent this problem, allowing us to get the data from the AR Tag Toolbox.
+
+### Team Member Contributions
+As a team, we have agreed that we have contributed equally to this project.
